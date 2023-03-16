@@ -70,34 +70,35 @@ func main() {
 		values := rows[1:]
 		fmt.Println(values)
 
-		templateDoc, err := docx.Open(templateName.Text)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
 		for _, row := range values {
+			// Create a new copy of the template document for this row
+			newTemplateDoc, err := docx.Open(templateName.Text)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
 			replaceMap := make(docx.PlaceholderMap)
 			for i, key := range keys {
 				replaceMap[key] = row[i]
 			}
 
-			err := templateDoc.ReplaceAll(replaceMap)
-			if err != nil {
-				fmt.Println(replaceMap)
-				fmt.Println("before error 1")
-				fmt.Println(err)
-				return
-			}
+			err = newTemplateDoc.ReplaceAll(replaceMap)
+    if err != nil {
+        fmt.Println(replaceMap)
+        fmt.Println("before error 1")
+        fmt.Println(err)
+        return
+    }
 
-			newDocName := fmt.Sprintf("%s.docx", row[0])
-			err = templateDoc.WriteToFile(newDocName)
-			if err != nil {
-				fmt.Println("before error 2")
-				fmt.Println(err)
-				return
-			}
-			fmt.Printf("Generated file: %s\n", newDocName)
+	newDocName := fmt.Sprintf("%s.docx", row[0])
+    err = newTemplateDoc.WriteToFile(newDocName)
+    if err != nil {
+        fmt.Println("before error 2")
+        fmt.Println(err)
+        return
+    }
+    fmt.Printf("Generated file: %s\n", newDocName)
 		}
 	})
 
